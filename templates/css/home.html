@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Home</title>
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.min.js"></script>
+	
+</head>
+<body background="bgimage.jpg">
+	<header>
+		<div class="container">
+		<h2 style="text-align: center;">spam detector</h2>
+		
+	</div>
+	</header>
+	<style>
+		textarea {
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+			/* border-radius: 30%; */
+		}
+		input {
+			margin-left: auto;
+			margin-right: auto;
+			display: block;
+			text-align: center;
+		}
+		p	{
+			text-align: center;
+		}
+
+	</style>
+	<div class="container">
+
+		<form action="{{ url_for('predict')}}" method="POST">
+			<p style="padding: 100px;">Enter Your Message Here</p>
+			<textarea name="message" rows="4" cols="50"></textarea>
+			<br/>
+
+			<input type="submit" class="btn-info" value="predict">
+		
+
+		{% if prediction == 1%}
+		<h2 style="color:red; text-align: center;">Spam</h2>
+		{% elif prediction == 0%}
+		<h2 style="color:blue; text-align: center;">Not Spam</h2>
+		{% endif %}
+	</form>
+		
+	</div>
+
+
+</body>
+</html>
