@@ -6,7 +6,7 @@ x = str(datetime.datetime.now())
 
 # connect to mongodb cloud and return the collection
 def mongoConnect():
-    client = MongoClient("mongodb+srv://scarydonut:" + parse.quote("password") +
+    client = MongoClient("mongodb+srv://scarydonut:" + parse.quote("YM7ZWNU5@mlab") +
                          "@cluster0-o1llq.mongodb.net/test?retryWrites=true&w=majority")
 
     db = client.SpamFiles

@@ -1,9 +1,10 @@
 from flask import Flask,render_template,url_for,request, redirect
+from bson.objectid import ObjectId
 import pandas as pd 
 import pickle
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.externals import joblib
+import joblib
 from main import mongoConnect
 collection = mongoConnect()
 # retr = collection.find()
@@ -28,21 +29,15 @@ def predict():
 	X = df['message']
 	y = df['label']
 	
-	# Extract Feature With CountVectorizer
 	cv = CountVectorizer()
-	X = cv.fit_transform(X) # Fit the Data
+	X = cv.fit_transform(X) 
 	from sklearn.model_selection import train_test_split
 	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
-	#Naive Bayes Classifier
 	from sklearn.naive_bayes import MultinomialNB
 
 	clf = MultinomialNB()
 	clf.fit(X_train,y_train)
 	clf.score(X_test,y_test)
-	#Alternative Usage of Saved Model
-	# joblib.dump(clf, 'NB_spam_model.pkl')
-	# NB_spam_model = open('NB_spam_model.pkl','rb')
-	# clf = joblib.load(NB_spam_model)
 
 	if request.method == 'POST':
 		message = request.form['message']
@@ -60,8 +55,7 @@ def predict():
 		# data_push['content'] = data[0]
 		# print(data[0], " ", my_prediction[0])
 		print(data_push)
-	# for i in retr:
-    		# print(i)
+
 	retr = collection.find()
 	return render_template('home.html',prediction = my_prediction, retr = retr)
 
@@ -70,11 +64,14 @@ def unspam():
 	retr = retrdata()
 	print("in unspam")
 	if(request.method == 'POST'):
-		print("asdas")
 		# getid = request.form['name']
-		myquery = { "content": request.form['name'] }
-		collection.delete_one(myquery)
-		print("now deleting: ", myquery)
+		# myquery = { "content": request.form['name'] }
+		# collection.delete_one(myquery)
+		for i in request.form:
+			print("request form content: ", i, " ", request.form[i])
+		collection.delete_one({'_id': ObjectId( request.form['id'] )})
+
+		# print("now deleting: ", myquery)
 		return redirect(url_for('home'))
 
 
