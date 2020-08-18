@@ -33,12 +33,20 @@ def predict():
 	X = cv.fit_transform(X) 
 	from sklearn.model_selection import train_test_split
 	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+	print("X_train")
+	print(X_train)
+	print("X_test")
+	print(X_test)
+	print("y_train")
+	print(y_train)
+	print("y_test")
+	print(y_test)
 	from sklearn.naive_bayes import MultinomialNB
 
 	clf = MultinomialNB()
 	clf.fit(X_train,y_train)
-	clf.score(X_test,y_test)
-
+	print("Test score: ", clf.score(X_test,y_test))
+	print("Train score: ", clf.score(X_train, y_train))
 	if request.method == 'POST':
 		message = request.form['message']
 		data = [message]
@@ -50,10 +58,6 @@ def predict():
 		}
 		global collection
 		collection.insert_one(data_push)
-		# if(data_push)
-		# data_push['result'] = "spam" if my_prediction[0] == 1 else "ham"
-		# data_push['content'] = data[0]
-		# print(data[0], " ", my_prediction[0])
 		print(data_push)
 
 	retr = collection.find()
@@ -64,45 +68,28 @@ def unspam():
 	retr = retrdata()
 	print("in unspam")
 	if(request.method == 'POST'):
-		# getid = request.form['name']
-		# myquery = { "content": request.form['name'] }
-		# collection.delete_one(myquery)
 		for i in request.form:
 			print("request form content: ", i, " ", request.form[i])
 		collection.delete_one({'_id': ObjectId( request.form['id'] )})
-
-		# print("now deleting: ", myquery)
-		return redirect(url_for('home'))
-
-
-
+	return redirect(url_for('home'))
 		# return render_template('home.html', retr = retr)
-	return render_template('home.html', retr = retr)
+	# return render_template('home.html', retr = retr)
 
 @app.route('/unmatch',methods=['POST'])
 def unmatch():
 	retr = retrdata()
 	if(request.method == 'POST'):
-		# getid = request.form['name']
-		myquery = { "content": request.form['name']}
-		found = collection.find(myquery)
-		getone = found[0]
-		# print(getone)
-		if(getone):
-			collection.delete_one(getone)
-			getone['result'] = "spam" if getone['result'] == "ham" else "ham"
-			collection.insert_one(getone)
-		print("updated now: ", getone)
-		# if(getone):
-			# collection.delete_one(myquery)
-			# collection.insert_one(found)
-		
-		return redirect(url_for('home'))
+		getRes = collection.find_one({'_id': ObjectId(request.form['id'])})
+		if(getRes):
+			setQueryVal = "spam" if getRes['result'] == "ham" else "ham" 
+			collection.update({'_id': ObjectId( request.form['id'] ) }, {'$set': {"result": setQueryVal}} )
+			print("updated now: ", getRes)
+
+	return redirect(url_for('home'))
 
 
 
-		# return render_template('home.html', retr = retr)
-	return render_template('home.html', retr = retr)
+	# return render_template('home.html', retr = retr)
 
 
 

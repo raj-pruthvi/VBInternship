@@ -61,14 +61,15 @@
 		
 	</style>
 	<div class="container">
-
+		<br>
 		<form action="{{ url_for('predict')}}" method="POST">
 			<p style="font-size: 35px;">spam detector</p>
+			<br>
 			<!-- <p style="font-size: 20px;">Enter Your Message Here</p> -->
 			<textarea style="display: block; margin-left: auto; margin-right: auto;" name="message" rows="4" placeholder="enter text message here to classify it into spam or not" cols="50"></textarea>
 			<br/>
 			
-			<input style="margin-left: auto; margin-right: auto; display: block; text-align: center;" type="submit" class="btn-info" value="predict">
+			<input style="margin-left: auto; margin-right: auto; display: block; text-align: center;" type="submit" class="btn btn-success" value="predict">
 		{% if prediction == 1%}
 		<h2 style="color:red; text-align: center;">Spam</h2>
 		{% elif prediction == 0%}
@@ -79,7 +80,7 @@
 		
 	</div>
 	<div class="break"></div>
-	<div class="jumbotron" style="background: #000000;">
+	<!-- <div class="jumbotron" style="background: #000000;">
 		<form action="{{ url_for('unspam')}}" method="POST">
 			<textarea style="display: block; margin-left: auto; margin-right: auto;" name="name" id="name" placeholder="enter text here to delete content, copy paste from the recents" cols="50" rows="4"></textarea> <br>
 			<input style="display: block; margin-left: auto; margin-right: auto;" class="btn-danger" type="submit" value="delete">
@@ -89,14 +90,19 @@
 			<textarea style="display: block; margin-left: auto; margin-right: auto;" name="name" id="name" placeholder="enter text here to change the result, copy paste from the recents to update" cols="50" rows="4"></textarea> <br>
 			<input style="display: block; margin-left: auto; margin-right: auto;" class="btn-success" type="submit" value="spam/unspam">
 		</form>
-	</div>
+	</div> -->
 
-	<table class="table table-striped table-hover table-dark">
-		<thead>
+	{% if(retr[0]) %}
+	<div class="container">
+		<p style="font-size: 28px;">archives</p>
+	</div>
+	<table class="table table-striped">
+		<thead class="thead-dark">
 		  <tr>
-			<th scope="col" style="text-align: center;">Recents</th>
+			<th scope="col" style="text-align: center; ">Text</th>
 			<th scope="col" style="text-align: center;">Result</th>
 			<th scope="col" style="text-align: center;">Delete</th>
+			<th scope="col" style="text-align: center;">Update results</th>
 			<!-- <th scope="col" style="text-align: center;">Marker</th> -->
 			<!-- <th scope="col" style="text-align: center;">Delete</th> -->
 		  </tr>
@@ -106,17 +112,23 @@
 		  <tr>
 			<td style="text-align: center; max-width: 100px;">{{i["content"]}}</td>
 			<td style="text-align: center;">{{i["result"]}}</td>
-			<td><form action="{{ url_for('unspam')}}" method="POST">
-				<input id="id" name="id" type="hidden" value='{{ i._id }}' />  
-				<!-- <textarea style="display: block; margin-left: auto; margin-right: auto;" name="name" id="name" placeholder="enter text here to change the result, copy paste from the recents to update" cols="50" rows="4"></textarea> <br> -->
-				<input style="display: block; margin-left: auto; margin-right: auto;" class="btn-success" type="submit" value="delete">
-			</form>
+			<td>
+				<form action="{{ url_for('unspam')}}" method="POST">
+					<input id="id" name="id" type="hidden" value='{{ i._id }}' />  
+					<input style="display: block; margin-left: auto; margin-right: auto;" class="btn btn-danger" type="submit" value="delete">
+				</form>
+			</td>
+			<td>
+				<form action="{{ url_for('unmatch')}}" method="POST">
+					<input id="id" name="id" type="hidden" value='{{ i._id }}' />
+					<input style="display: block; margin-left: auto; margin-right: auto;" class="btn btn-warning" type="submit" value="spam/unspam">
+				</form>
 			</td>
 		  </tr>
 		{% endfor %}
 		</tbody>
 	  </table>
-
+	  {% endif %}
 
 </body>
 </html>
